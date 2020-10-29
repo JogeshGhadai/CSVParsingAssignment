@@ -1,0 +1,67 @@
+If we want to store only the last updated by data:
+
+Employee (EmpId(PK), Name<>, Last<>, CreatedById, LastUpdatedById, CreatedBy, LastUpdatedBy)
+EmployeeSkills (EmpId(FK), SkillId(FK))
+Skills (SkillId(PK), SkillName)
+StackData (EmpId(FK), StackId(PK), StackNickName<>)
+
+
+If we want to keep all the updated by records:
+
+Employee (EmpId(PK), Name, Last, CreatedById, CreatedBy)
+EmployeeSkills (EmpId(FK), SkillId(FK))
+Skills (SkillId(PK), SkillName)
+StackData (EmpId(FK), StackId(PK), StackNickName)
+RecordUpdationData (EmpId(FK), UpdatedId, UpdatedBy, UpdateTimestamp)
+
+
+
+- Normalizing and Redesigning the Table for storing employees with skills and stack id. Considering the factor that their might be other ids like stack ids associated to an employee in future. Also we need to store the skills so that "Redis" and "redis" should be same. : 4 Hours
+
+- Fetching Data from CSV Files with eccentric characters (like: L'Oréal) and Emojis and Storing them to MySQL created tables while handling the db collation. : 3 Hours
+
+- Fetching the Data stored from MySQL table with eccentric characters (like: L'Oréal) and Emojis and store them in CSV using Pythons csv reader. : 1 Hour
+
+
+CREATE TABLE Employee (
+EmpId varchar(20),
+FirstName varchar(255) NOT NULL,
+LastName varchar(255) NOT NULL,
+CreatedById varchar(20) NOT NULL,
+LastUpdatedById varchar(20),
+CreatedBy varchar(255) NOT NULL,
+LastUpdatedBy varchar(255),
+PRIMARY KEY (EmpId)
+) CHARACTER SET=utf8mb4;
+
+CREATE TABLE EmployeeSkills (
+id int AUTO_INCREMENT,
+EmpId varchar(20),
+SkillName varchar(255) NOT NULL,
+PRIMARY KEY (id)
+);
+
+CREATE TABLE StackData (
+StackId varchar(20),
+EmpId varchar(20),
+StackNickName varchar(255) NOT NULL,
+PRIMARY KEY (StackId),
+FOREIGN KEY (EmpId) REFERENCES Employee(EmpId)
+) CHARACTER SET=utf8mb4;
+
+DROP TABLE StackData;
+DROP TABLE EmployeeSkills;
+DROP TABLE Employee;
+
+DROP TABLE AllData;
+
+SELECT * FROM Employee;
+SELECT * FROM EmployeeSkills;
+SELECT * FROM StackData;
+
+DELETE FROM EmployeeSkills;
+DELETE FROM StackData;
+DELETE FROM Employee;
+
+CREATE TABLE test_table2 (test_str varchar(256)) CHARACTER SET=latin1;
+ALTER TABLE test_table2 ADD test_str_2 varchar(256) CHARACTER SET utf8;
