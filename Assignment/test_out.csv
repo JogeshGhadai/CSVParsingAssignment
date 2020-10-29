@@ -1,0 +1,8 @@
+EmpID,Name,Last,Skill1,Skill2,Skill3,Skill4,Skill5,StackID,StackNickname,CreatedById,UpdatedById,CreatedBy,UpdatedBy
+E1234,Peter,Kali,Nosql,mongodb,redis,node.js,,3767564,Demon,2,1,MC,AS
+E1235,Frédéric,Abecassis,jQuery,Perl,Nginx,Memcached,,5406008,Storm,2,2,MC,MC
+E2099,Don,O'Donnell,node.js,Redis,,,,4465062,Açıkgöz,2,3,MC,SL
+E2121,John,Smith,PHP,MySQL,Laravel,jQuery,Jira,2795324,Tap,1,2,AS,MC
+E3443,Manjeet,Singh,PHP,Python,Perl,MySQL,,187144,Ismael,2,3,MC,SL
+E4397,John,Cooper,agile,Jira,Scrum,,,1857053,Rich,3,1,SL,AS
+E6789,Hailey,Bailey,HTML5,javascript,,,,445686,Music,3,1,SL,AS
