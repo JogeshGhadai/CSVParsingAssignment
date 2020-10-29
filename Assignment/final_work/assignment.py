@@ -6,7 +6,6 @@ def main():
     #import pdb;pdb.set_trace()
     all_data = fetct_all_csv_data()
     insert_all_data_to_tables(all_data)
-    import pdb;pdb.set_trace()
     all_fetched_data = fetch_saved_data_from_db()
     write_fetched_data_to_csv(all_data, all_fetched_data)
 
@@ -29,7 +28,8 @@ def write_fetched_data_to_csv(headers_data, all_data):
             writer.writerows(headers_data["EmpStackDetails"]["headers"])
             writer.writerows(all_data["EmpStackDetails"])
 
-        print("Data written successfully to CSV.")
+        print "Data written successfully to CSV."
+
     except Exception as e:
         print "Error while writing data to CSV: "+e.message
 
@@ -49,6 +49,7 @@ def fetct_all_csv_data():
             temp_data = [data for data in csv.reader(csvfile)]
             all_data["EmpStackDetails"] = {"headers": temp_data[:1],
                                            "data": temp_data[1:]}
+        print "All Data Fetched from CSVs Successfully."
     except Exception as e:
         all_data["EmpDetails"] = {"headers":[],"data":[]}
         all_data["EmpSkills"] = {"headers":[],"data":[]}
@@ -120,42 +121,44 @@ def fetch_saved_data_from_db():
         db = get_db_connection()
         
         empdetails_fetch_query = "SELECT * FROM Employee;"
-        empskills_fetch_query = "SELECT * FROM EmployeeSkills;"
+        empskills_fetch_query = "SELECT SkillName,EmpId FROM EmployeeSkills;"
         empstackdetails_fetch_query = "SELECT * FROM StackData;"
         
         empdetails_fetch_cursor = db.cursor()
         empskills_fetch_cursor = db.cursor()
         empstackdetails_cursor = db.cursor()
         
+        empdetails_fetch_cursor.execute(empdetails_fetch_query) 
         empdetails_records = empdetails_fetch_cursor.fetchall()
-        empskills_records = empskills_fetch_cursor.fetchall()
-        empstackdetail_records = empstackdetails_cursor.fetchall()
-        
         final_empdetails_data = []
-        final_empskills_data = []
-        final_empstackdetails_data = []
-        
         for rec in empdetails_records:
             temp = []
             for aa in rec:
                 temp.append(aa.encode("utf-8"))
             final_empdetails_data.append(tuple(temp))
-
+        all_fetched_data["EmpDetails"] = final_empdetails_data
+        
+        empskills_fetch_cursor.execute(empskills_fetch_query)
+        empskills_records = empskills_fetch_cursor.fetchall()
+        final_empskills_data = []
         for rec in empskills_records:
             temp = []
             for aa in rec:
                 temp.append(aa.encode("utf-8"))
             final_empskills_data.append(tuple(temp))
-
+        all_fetched_data["EmpSkills"] = final_empskills_data
+        
+        empstackdetails_cursor.execute(empstackdetails_fetch_query)
+        empstackdetail_records = empstackdetails_cursor.fetchall()
+        final_empstackdetails_data = []
         for rec in empstackdetail_records:
             temp = []
             for aa in rec:
                 temp.append(aa.encode("utf-8"))
             final_empstackdetails_data.append(tuple(temp))
-        
-        all_fetched_data["EmpDetails"] = final_empdetails_data
-        all_fetched_data["EmpSkills"] = final_empskills_data
         all_fetched_data["EmpStackDetails"] = final_empstackdetails_data
+        
+        print "All Data fetched from DB Successfully!"
 
     except Exception as e:
         all_fetched_data["EmpDetails"] = []
