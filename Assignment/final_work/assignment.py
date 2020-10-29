@@ -1,4 +1,5 @@
 import csv
+import yaml
 import mysql.connector as mysql
 
 
@@ -82,11 +83,14 @@ def get_db_connection():
     """
 
     try:
+        with open("./config.yaml") as f:
+            mysql_creds = yaml.load(f, Loader=yaml.FullLoader)["mysql"]
+
         db = mysql.connect(
-            host = "localhost",
-            user = "jogeshg",
-            passwd = "abcd1234",
-            database = "assignmentdb"
+            host = mysql_creds["host"],
+            user = mysql_creds["user"],
+            passwd = mysql_creds["passwd"],
+            database = mysql_creds["db"]
         )
     
     except:

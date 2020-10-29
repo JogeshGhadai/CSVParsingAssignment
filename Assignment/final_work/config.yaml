@@ -1,0 +1,5 @@
+mysql:
+    passwd: "abcd1234"
+    host: "localhost"
+    db: "assignmentdb"
+    user: "jogeshg"
