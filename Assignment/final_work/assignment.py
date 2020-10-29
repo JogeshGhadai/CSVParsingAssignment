@@ -10,30 +10,6 @@ def main():
     write_fetched_data_to_csv(all_data, all_fetched_data)
 
 
-def write_fetched_data_to_csv(headers_data, all_data):
-    try:
-
-        with open("./outputs/EmpDetails_Output.csv", "w") as out_file:
-            writer = csv.writer(out_file)
-            writer.writerows(headers_data["EmpDetails"]["headers"])
-            writer.writerows(all_data["EmpDetails"])
-        
-        with open("./outputs/EmpSkills_Output.csv", "w") as out_file:
-            writer = csv.writer(out_file)
-            writer.writerows(headers_data["EmpSkills"]["headers"])
-            writer.writerows(all_data["EmpSkills"])
-        
-        with open("./outputs/EmpStackDetails_Output.csv", "w") as out_file:
-            writer = csv.writer(out_file)
-            writer.writerows(headers_data["EmpStackDetails"]["headers"])
-            writer.writerows(all_data["EmpStackDetails"])
-
-        print "Data written successfully to CSV."
-
-    except Exception as e:
-        print "Error while writing data to CSV: "+e.message
-
-
 def fetct_all_csv_data():
     all_data = {}
     try:
@@ -46,7 +22,6 @@ def fetct_all_csv_data():
             final_data = []
             for skill_name,emp_id in temp_data[1:]:
                 final_data.append((lower_and_remove_punctuation(skill_name), emp_id))
-
             all_data["EmpSkills"] = {"headers": temp_data[:1],
                                      "data": final_data}
         with open("./inputs/EmpStackDetails.csv", "r") as csvfile:
@@ -61,6 +36,15 @@ def fetct_all_csv_data():
         print "Error Occured While Reading the CSV files: "+e.message
     finally:
         return all_data
+
+
+def lower_and_remove_punctuation(word):
+    res = ""
+    punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+    for le in word:
+        if le not in punctuations:
+            res += le
+    return res.lower()
 
 
 def get_db_connection():
@@ -178,13 +162,28 @@ def fetch_saved_data_from_db():
         return all_fetched_data
 
 
-def lower_and_remove_punctuation(word):
-    res = ""
-    punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
-    for le in word:
-        if le not in punctuations:
-            res += le
-    return res.lower()
+def write_fetched_data_to_csv(headers_data, all_data):
+    try:
+
+        with open("./outputs/EmpDetails_Output.csv", "w") as out_file:
+            writer = csv.writer(out_file)
+            writer.writerows(headers_data["EmpDetails"]["headers"])
+            writer.writerows(all_data["EmpDetails"])
+        
+        with open("./outputs/EmpSkills_Output.csv", "w") as out_file:
+            writer = csv.writer(out_file)
+            writer.writerows(headers_data["EmpSkills"]["headers"])
+            writer.writerows(all_data["EmpSkills"])
+        
+        with open("./outputs/EmpStackDetails_Output.csv", "w") as out_file:
+            writer = csv.writer(out_file)
+            writer.writerows(headers_data["EmpStackDetails"]["headers"])
+            writer.writerows(all_data["EmpStackDetails"])
+
+        print "Data written successfully to CSV."
+
+    except Exception as e:
+        print "Error while writing data to CSV: "+e.message
 
 
 if __name__ == "__main__":
