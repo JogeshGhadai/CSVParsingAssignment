@@ -3,7 +3,6 @@ import mysql.connector as mysql
 
 
 def main():
-    #import pdb;pdb.set_trace()
     all_data = fetct_all_csv_data()
     insert_all_data_to_tables(all_data)
     all_fetched_data = fetch_saved_data_from_db()
@@ -11,7 +10,17 @@ def main():
 
 
 def fetct_all_csv_data():
+    """
+    It fetches the data present in Inputs folder CSV Files 
+    and returnsthem in a dictionary format.
+    
+    Returns
+    -------
+    dict
+    """
+    
     all_data = {}
+    
     try:
         with open("./inputs/EmpDetails.csv", "r") as csvfile:
             temp_data = [data for data in csv.reader(csvfile)]
@@ -29,18 +38,34 @@ def fetct_all_csv_data():
             all_data["EmpStackDetails"] = {"headers": temp_data[:1],
                                            "data": temp_data[1:]}
         print "All Data Fetched from CSVs Successfully."
+    
     except Exception as e:
         all_data["EmpDetails"] = {"headers":[],"data":[]}
         all_data["EmpSkills"] = {"headers":[],"data":[]}
         all_data["EmpStackDetails"] = {"headers":[],"data":[]}
         print "Error Occured While Reading the CSV files: "+e.message
+    
     finally:
         return all_data
 
 
 def lower_and_remove_punctuation(word):
+    """
+    It Removes Punctuations and Lowers the given word.
+    
+    Parameters
+    ----------
+    word : str
+        The word to be modified
+
+    Returns
+    -------
+    str
+    """
+
     res = ""
     punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+    
     for le in word:
         if le not in punctuations:
             res += le
@@ -48,6 +73,14 @@ def lower_and_remove_punctuation(word):
 
 
 def get_db_connection():
+    """
+    It Creates a MySQL DB Connection and returns the db connection object.
+    
+    Returns
+    -------
+    mysql.connect
+    """
+
     try:
         db = mysql.connect(
             host = "localhost",
@@ -55,14 +88,25 @@ def get_db_connection():
             passwd = "abcd1234",
             database = "assignmentdb"
         )
+    
     except:
         db = None
         print "Error While Generating the DB Connection."
+    
     finally:
         return db
 
 
 def insert_all_data_to_tables(all_data):
+    """
+    It inserts the data present in the dictionary to the 
+    respective MySQL Tables.
+    
+    Parameters
+    ----------
+    all_data : dict
+        The dictionary which is used to write data to MySQL DB.
+    """
 
     try:
         db = get_db_connection()
@@ -103,8 +147,17 @@ def insert_all_data_to_tables(all_data):
 
 
 def fetch_saved_data_from_db():
+    """
+    It fetched the data saved in the MySQL DB and returns 
+    in the form of a Dictionary.
+
+    Returns
+    -------
+    dict
+    """
 
     all_fetched_data = {}
+    
     try:
         db = get_db_connection()
         
@@ -119,6 +172,7 @@ def fetch_saved_data_from_db():
         empdetails_fetch_cursor.execute(empdetails_fetch_query) 
         empdetails_records = empdetails_fetch_cursor.fetchall()
         final_empdetails_data = []
+        
         for rec in empdetails_records:
             temp = []
             for aa in rec:
@@ -129,6 +183,7 @@ def fetch_saved_data_from_db():
         empskills_fetch_cursor.execute(empskills_fetch_query)
         empskills_records = empskills_fetch_cursor.fetchall()
         final_empskills_data = []
+        
         for rec in empskills_records:
             temp = []
             for aa in rec:
@@ -139,6 +194,7 @@ def fetch_saved_data_from_db():
         empstackdetails_cursor.execute(empstackdetails_fetch_query)
         empstackdetail_records = empstackdetails_cursor.fetchall()
         final_empstackdetails_data = []
+        
         for rec in empstackdetail_records:
             temp = []
             for aa in rec:
@@ -163,6 +219,17 @@ def fetch_saved_data_from_db():
 
 
 def write_fetched_data_to_csv(headers_data, all_data):
+    """
+    It writes the Data to CSV files.
+
+    Parameters
+    ----------
+    headers_data : dict
+        It contains the header names required for writing in CSVs.
+    all_data : dict
+        It contains all the data except the Headers of for the CSV.
+    """
+    
     try:
 
         with open("./outputs/EmpDetails_Output.csv", "w") as out_file:
