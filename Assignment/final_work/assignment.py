@@ -43,8 +43,12 @@ def fetct_all_csv_data():
                                       "data": temp_data[1:]}
         with open("./inputs/EmpSkills.csv", "r") as csvfile:
             temp_data = [data for data in csv.reader(csvfile)]
+            final_data = []
+            for skill_name,emp_id in temp_data[1:]:
+                final_data.append((lower_and_remove_punctuation(skill_name), emp_id))
+
             all_data["EmpSkills"] = {"headers": temp_data[:1],
-                                     "data": temp_data[1:]}
+                                     "data": final_data}
         with open("./inputs/EmpStackDetails.csv", "r") as csvfile:
             temp_data = [data for data in csv.reader(csvfile)]
             all_data["EmpStackDetails"] = {"headers": temp_data[:1],
@@ -172,6 +176,15 @@ def fetch_saved_data_from_db():
         empstackdetails_cursor.close()
         db.close()
         return all_fetched_data
+
+
+def lower_and_remove_punctuation(word):
+    res = ""
+    punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+    for le in word:
+        if le not in punctuations:
+            res += le
+    return res.lower()
 
 
 if __name__ == "__main__":
