@@ -1,5 +1,6 @@
 import csv
 import yaml
+import logging
 import mysql.connector as mysql
 
 
@@ -38,13 +39,13 @@ def fetct_all_csv_data():
             temp_data = [data for data in csv.reader(csvfile)]
             all_data["EmpStackDetails"] = {"headers": temp_data[:1],
                                            "data": temp_data[1:]}
-        print "All Data Fetched from CSVs Successfully."
+        logging.info("All Data Fetched from CSVs Successfully.")
     
     except Exception as e:
         all_data["EmpDetails"] = {"headers":[],"data":[]}
         all_data["EmpSkills"] = {"headers":[],"data":[]}
         all_data["EmpStackDetails"] = {"headers":[],"data":[]}
-        print "Error Occured While Reading the CSV files: "+e.message
+        logging.error("Error Occured While Reading the CSV files: "+e.message)
     
     finally:
         return all_data
@@ -95,7 +96,7 @@ def get_db_connection():
     
     except:
         db = None
-        print "Error While Generating the DB Connection."
+        logging.error("Error While Generating the DB Connection.")
     
     finally:
         return db
@@ -138,10 +139,10 @@ def insert_all_data_to_tables(all_data):
                                                   all_data["EmpStackDetails"]["data"])
 
         db.commit()
-        print "Data Saved to DB Successfully!"
+        logging.info("Data Saved to DB Successfully!")
 
     except Exception as e:
-        print "Error Occured While Saving Data into DB: "+e.message
+        logging.error("Error Occured While Saving Data into DB: "+e.message)
     
     finally:
         empdetails_insert_cursor.close()
@@ -224,13 +225,13 @@ def fetch_saved_data_from_db():
             final_empstackdetails_data.append(tuple(temp))
         all_fetched_data["EmpStackDetails"] = final_empstackdetails_data
         
-        print "All Data fetched from DB Successfully!"
+        logging.info("All Data fetched from DB Successfully!")
 
     except Exception as e:
         all_fetched_data["EmpDetails"] = []
         all_fetched_data["EmpSkills"] = []
         all_fetched_data["EmpStackDetails"] = []
-        print "Error While fetching data from DB: "+e.message
+        logging.error("Error While fetching data from DB: "+e.message)
 
     finally:
         empdetails_fetch_cursor.close()
@@ -269,10 +270,10 @@ def write_fetched_data_to_csv(headers_data, all_data):
             writer.writerows(headers_data["EmpStackDetails"]["headers"])
             writer.writerows(all_data["EmpStackDetails"])
 
-        print "Data written successfully to CSV."
+        logging.info("Data written successfully to CSV.")
 
     except Exception as e:
-        print "Error while writing data to CSV: "+e.message
+        logging.error("Error while writing data to CSV: "+e.message)
 
 
 if __name__ == "__main__":
