@@ -145,10 +145,14 @@ def insert_all_data_to_tables(all_data):
         logging.error("Error Occured While Saving Data into DB: "+e.message)
     
     finally:
-        empdetails_insert_cursor.close()
-        empskills_insert_cursor.close()
-        empstackdetails_insert_cursor.close()
-        db.close()
+        if empdetails_insert_cursor is not None:
+            empdetails_insert_cursor.close()
+        if empskills_insert_cursor is not None:
+            empskills_insert_cursor.close()
+        if empstackdetails_insert_cursor is not None:
+            empstackdetails_insert_cursor.close()
+        if db is not None:
+            db.close()
 
 
 def fetch_saved_data_from_db():
@@ -234,10 +238,14 @@ def fetch_saved_data_from_db():
         logging.error("Error While fetching data from DB: "+e.message)
 
     finally:
-        empdetails_fetch_cursor.close()
-        empskills_fetch_cursor.close()
-        empstackdetails_cursor.close()
-        db.close()
+        if empdetails_fetch_cursor is not None:
+            empdetails_fetch_cursor.close()
+        if empskills_fetch_cursor is not None:
+            empskills_fetch_cursor.close()
+        if empstackdetails_cursor is not None:
+            empstackdetails_cursor.close()
+        if db is not None:
+            db.close()
         return all_fetched_data
 
 
