@@ -28,3 +28,42 @@ FOREIGN KEY (EmpId) REFERENCES Employee(EmpId)
 ) CHARACTER SET=latin1;
 
 ALTER TABLE StackData ADD StackNickName varchar(255) CHARACTER SET utf8mb4;
+
+
+mysql> DESC Employee;
++-----------------+--------------+------+-----+---------+-------+
+| Field           | Type         | Null | Key | Default | Extra |
++-----------------+--------------+------+-----+---------+-------+
+| EmpId           | varchar(20)  | NO   | PRI | NULL    |       |
+| FName           | varchar(255) | YES  |     | NULL    |       |
+| LName           | varchar(255) | YES  |     | NULL    |       |
+| CreatedById     | varchar(20)  | NO   |     | NULL    |       |
+| LastUpdatedById | varchar(20)  | YES  |     | NULL    |       |
+| CreatedBy       | varchar(255) | NO   |     | NULL    |       |
+| LastUpdatedBy   | varchar(255) | YES  |     | NULL    |       |
+| FirstName       | varchar(255) | YES  |     | NULL    |       |
+| LastName        | varchar(255) | YES  |     | NULL    |       |
++-----------------+--------------+------+-----+---------+-------+
+9 rows in set (0.00 sec)
+
+mysql> DESC EmployeeSkills;
++-----------+--------------+------+-----+---------+----------------+
+| Field     | Type         | Null | Key | Default | Extra          |
++-----------+--------------+------+-----+---------+----------------+
+| id        | int          | NO   | PRI | NULL    | auto_increment |
+| EmpId     | varchar(20)  | YES  |     | NULL    |                |
+| SkillName | varchar(255) | NO   |     | NULL    |                |
++-----------+--------------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> DESC StackData;
++---------------+--------------+------+-----+---------+-------+
+| Field         | Type         | Null | Key | Default | Extra |
++---------------+--------------+------+-----+---------+-------+
+| StackId       | varchar(20)  | NO   | PRI | NULL    |       |
+| EmpId         | varchar(20)  | YES  | MUL | NULL    |       |
+| SNickName     | varchar(255) | YES  |     | NULL    |       |
+| StackNickName | varchar(255) | YES  |     | NULL    |       |
++---------------+--------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
