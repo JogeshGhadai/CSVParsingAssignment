@@ -165,9 +165,27 @@ def fetch_saved_data_from_db():
     try:
         db = get_db_connection()
         
-        empdetails_fetch_query = "SELECT * FROM Employee;"
-        empskills_fetch_query = "SELECT SkillName,EmpId FROM EmployeeSkills;"
-        empstackdetails_fetch_query = "SELECT * FROM StackData;"
+        empdetails_fetch_query = "SELECT \
+                                    EmpId, \
+                                    FirstName, \
+                                    LastName, \
+                                    CreatedById, \
+                                    LastUpdatedById, \
+                                    CreatedBy, \
+                                    LastUpdatedBy \
+                                  FROM \
+                                  Employee;"
+        empskills_fetch_query = "SELECT \
+                                   SkillName, \
+                                   EmpId \
+                                 FROM \
+                                 EmployeeSkills;"
+        empstackdetails_fetch_query = "SELECT \
+                                         StackId, \
+                                         EmpId, \
+                                         StackNickName \
+                                       FROM \
+                                       StackData;"
         
         empdetails_fetch_cursor = db.cursor()
         empskills_fetch_cursor = db.cursor()

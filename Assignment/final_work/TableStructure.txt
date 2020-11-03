@@ -1,0 +1,30 @@
+CREATE TABLE Employee (
+EmpId varchar(20),
+FName varchar(255),
+LName varchar(255),
+CreatedById varchar(20) NOT NULL,
+LastUpdatedById varchar(20),
+CreatedBy varchar(255) NOT NULL,
+LastUpdatedBy varchar(255),
+PRIMARY KEY (EmpId)
+) CHARACTER SET=latin1;
+
+ALTER TABLE Employee ADD FirstName varchar(255) CHARACTER SET utf8mb4;
+ALTER TABLE Employee ADD LastName varchar(255) CHARACTER SET utf8mb4;
+
+CREATE TABLE EmployeeSkills (
+id int AUTO_INCREMENT,
+EmpId varchar(20),
+SkillName varchar(255) NOT NULL,
+PRIMARY KEY (id)
+);
+
+CREATE TABLE StackData (
+StackId varchar(20),
+EmpId varchar(20),
+SNickName varchar(255),
+PRIMARY KEY (StackId),
+FOREIGN KEY (EmpId) REFERENCES Employee(EmpId)
+) CHARACTER SET=latin1;
+
+ALTER TABLE StackData ADD StackNickName varchar(255) CHARACTER SET utf8mb4;
