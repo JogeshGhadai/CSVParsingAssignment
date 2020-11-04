@@ -5,10 +5,21 @@ import mysql.connector as mysql
 
 
 def main():
-    all_data = fetct_all_csv_data()
-    insert_all_data_to_tables(all_data)
-    all_fetched_data = fetch_saved_data_from_db()
-    write_fetched_data_to_csv(all_data, all_fetched_data)
+    try:
+        all_data = fetct_all_csv_data()
+        db_connection = get_db_connection()
+        db_cur = db_connection.cursor()
+        insert_all_data_to_tables(all_data, db_cur)
+        db_connection.commit()
+        all_fetched_data = fetch_saved_data_from_db(db_cur)
+        write_fetched_data_to_csv(all_data, all_fetched_data)
+    except Exception as e:
+        logging.error("Error Occured in main flow: "+e.message)
+    finally:
+        if db_cur is not None:
+            db_cur.close()
+        if db_connection is not None:
+            db_connection.close()
 
 
 def fetct_all_csv_data():
@@ -102,7 +113,7 @@ def get_db_connection():
         return db
 
 
-def insert_all_data_to_tables(all_data):
+def insert_all_data_to_tables(all_data, db_cursor):
     """
     It inserts the data present in the dictionary to the 
     respective MySQL Tables.
@@ -114,7 +125,6 @@ def insert_all_data_to_tables(all_data):
     """
 
     try:
-        db = get_db_connection()
         empdetails_insert_query = "INSERT INTO Employee (EmpId, FirstName, \
                                                          LastName, CreatedById, \
                                                          LastUpdatedById, CreatedBy, \
@@ -127,35 +137,20 @@ def insert_all_data_to_tables(all_data):
         empstackdetails_insert_query = "INSERT INTO StackData (StackId, StackNickName, EmpId) \
                                                        VALUES (%s, %s, %s);"
 
-        empdetails_insert_cursor = db.cursor()
-        empskills_insert_cursor = db.cursor()
-        empstackdetails_insert_cursor = db.cursor()
-        
-        empdetails_insert_cursor.executemany(empdetails_insert_query, 
-                                             all_data["EmpDetails"]["data"])
-        empskills_insert_cursor.executemany(empskills_insert_query, 
-                                            all_data["EmpSkills"]["data"])
-        empstackdetails_insert_cursor.executemany(empstackdetails_insert_query,
-                                                  all_data["EmpStackDetails"]["data"])
+        db_cursor.executemany(empdetails_insert_query, 
+                              all_data["EmpDetails"]["data"])
+        db_cursor.executemany(empskills_insert_query, 
+                              all_data["EmpSkills"]["data"])
+        db_cursor.executemany(empstackdetails_insert_query,
+                              all_data["EmpStackDetails"]["data"])
 
-        db.commit()
         logging.info("Data Saved to DB Successfully!")
 
     except Exception as e:
         logging.error("Error Occured While Saving Data into DB: "+e.message)
     
-    finally:
-        if empdetails_insert_cursor is not None:
-            empdetails_insert_cursor.close()
-        if empskills_insert_cursor is not None:
-            empskills_insert_cursor.close()
-        if empstackdetails_insert_cursor is not None:
-            empstackdetails_insert_cursor.close()
-        if db is not None:
-            db.close()
 
-
-def fetch_saved_data_from_db():
+def fetch_saved_data_from_db(db_cursor):
     """
     It fetched the data saved in the MySQL DB and returns 
     in the form of a Dictionary.
@@ -168,8 +163,6 @@ def fetch_saved_data_from_db():
     all_fetched_data = {}
     
     try:
-        db = get_db_connection()
-        
         empdetails_fetch_query = "SELECT \
                                     EmpId, \
                                     FirstName, \
@@ -192,12 +185,8 @@ def fetch_saved_data_from_db():
                                        FROM \
                                        StackData;"
         
-        empdetails_fetch_cursor = db.cursor()
-        empskills_fetch_cursor = db.cursor()
-        empstackdetails_cursor = db.cursor()
-        
-        empdetails_fetch_cursor.execute(empdetails_fetch_query) 
-        empdetails_records = empdetails_fetch_cursor.fetchall()
+        db_cursor.execute(empdetails_fetch_query) 
+        empdetails_records = db_cursor.fetchall()
         final_empdetails_data = []
         
         for rec in empdetails_records:
@@ -207,8 +196,8 @@ def fetch_saved_data_from_db():
             final_empdetails_data.append(tuple(temp))
         all_fetched_data["EmpDetails"] = final_empdetails_data
         
-        empskills_fetch_cursor.execute(empskills_fetch_query)
-        empskills_records = empskills_fetch_cursor.fetchall()
+        db_cursor.execute(empskills_fetch_query)
+        empskills_records = db_cursor.fetchall()
         final_empskills_data = []
         
         for rec in empskills_records:
@@ -218,8 +207,8 @@ def fetch_saved_data_from_db():
             final_empskills_data.append(tuple(temp))
         all_fetched_data["EmpSkills"] = final_empskills_data
         
-        empstackdetails_cursor.execute(empstackdetails_fetch_query)
-        empstackdetail_records = empstackdetails_cursor.fetchall()
+        db_cursor.execute(empstackdetails_fetch_query)
+        empstackdetail_records = db_cursor.fetchall()
         final_empstackdetails_data = []
         
         for rec in empstackdetail_records:
@@ -238,14 +227,6 @@ def fetch_saved_data_from_db():
         logging.error("Error While fetching data from DB: "+e.message)
 
     finally:
-        if empdetails_fetch_cursor is not None:
-            empdetails_fetch_cursor.close()
-        if empskills_fetch_cursor is not None:
-            empskills_fetch_cursor.close()
-        if empstackdetails_cursor is not None:
-            empstackdetails_cursor.close()
-        if db is not None:
-            db.close()
         return all_fetched_data
 
 
